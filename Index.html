@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="no">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Luna: Din Sissy-Veileder</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8f7fa; /* Lys, nesten hvit bakgrunn */
+        }
+        /* Definerer fargepaletten fra planen din for enklere bruk */
+        .bg-luna-pink-deep { background-color: #d81b60; }
+        .text-luna-pink-deep { color: #d81b60; }
+        .border-luna-pink-deep { border-color: #d81b60; }
+        .bg-luna-purple-soft { background-color: #ab47bc; }
+        .text-luna-purple-soft { color: #ab47bc; }
+        .bg-luna-green { background-color: #43a047; }
+        .text-luna-green { color: #43a047; }
+        
+        /* For å skjule/vise sider */
+        .page { display: none; }
+        .page.active { display: block; }
+
+        /* Custom scrollbar for chat */
+        .chat-messages::-webkit-scrollbar {
+            width: 6px;
+        }
+        .chat-messages::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+        .chat-messages::-webkit-scrollbar-thumb {
+            background: #c4b5fd;
+            border-radius: 6px;
+        }
+        .chat-messages::-webkit-scrollbar-thumb:hover {
+            background: #a78bfa;
+        }
+
+        /* Lasteindikator spinner */
+        .loader {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #ab47bc;
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body class="bg-gray-100 text-gray-800">
+
+    <div id="app-container" class="max-w-md mx-auto min-h-screen bg-white shadow-2xl flex flex-col">
+        
+        <!-- Topp Header -->
+        <header class="p-4 flex justify-between items-center bg-white border-b border-gray-200 sticky top-0 z-10">
+            <div id="header-left">
+                <h1 class="text-xl font-bold text-luna-purple-soft">Luna</h1>
+                <p class="text-sm text-gray-500">Din Sissy-Veileder</p>
+            </div>
+             <div id="header-right" class="text-right">
+                <p class="font-semibold text-luna-pink-deep">Nivå <span id="level-display-header">1</span></p>
+                <p class="text-sm text-gray-500"><span id="points-display-header">50</span> poeng</p>
+            </div>
+        </header>
+
+        <main class="flex-grow p-4 overflow-y-auto">
+            <!-- Hjem Siden -->
+            <div id="page-hjem" class="page active">
+                <div class="text-center mb-8">
+                    <div class="relative w-48 h-48 mx-auto bg-gradient-to-br from-purple-200 to-pink-200 rounded-full flex flex-col justify-center items-center shadow-lg">
+                        <p class="text-gray-600 text-sm">Nåværende Poengsum</p>
+                        <p id="points-display-main" class="text-5xl font-bold text-luna-pink-deep">50</p>
+                    </div>
+                </div>
+
+                <div class="text-center mb-8">
+                    <h2 class="text-lg font-semibold text-gray-700">Neste Task:</h2>
+                    <p id="next-task-display" class="text-xl text-luna-purple-soft">Kjenn BHen</p>
+                </div>
+
+                <div class="p-4 bg-gray-50 rounded-lg text-center">
+                    <p id="motivational-quote" class="text-gray-600 italic">"Hver minste bevegelse former din Isadora. Du er vakker i din dedikasjon."</p>
+                </div>
+            </div>
+
+            <!-- Daglige Tasks Siden -->
+            <div id="page-tasks" class="page">
+                <h2 class="text-2xl font-bold mb-4 text-luna-purple-soft">Mine Daglige Tasks</h2>
+                <div id="task-list" class="space-y-3">
+                    <!-- Tasks blir generert av JavaScript -->
+                </div>
+            </div>
+
+            <!-- Poeng & Belønninger Siden -->
+            <div id="page-rewards" class="page">
+                <h2 class="text-2xl font-bold mb-4 text-luna-purple-soft">Poeng & Belønninger</h2>
+                <div class="bg-white p-4 rounded-lg shadow-md mb-6">
+                    <div class="flex justify-between items-center mb-2">
+                        <span class="font-bold text-lg">Totalt: <span id="rewards-points-total" class="text-luna-pink-deep">50</span> poeng</span>
+                        <span class="text-sm text-gray-500">Neste Nivå: <span id="next-level-target">1000</span>p</span>
+                    </div>
+                    <div class="w-full bg-gray-200 rounded-full h-4">
+                        <div id="level-progress-bar" class="bg-gradient-to-r from-pink-400 to-purple-500 h-4 rounded-full" style="width: 5%"></div>
+                    </div>
+                    <p class="text-center text-sm mt-1">Nivå <span id="rewards-level">1</span>: Nybegynner Sissy</p>
+                </div>
+
+                <h3 class="text-xl font-semibold mb-3">Belønningsbutikk</h3>
+                <div id="rewards-store" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <!-- Belønninger blir generert av JavaScript -->
+                </div>
+            </div>
+
+            <!-- Dokumentasjon Siden -->
+            <div id="page-docs" class="page">
+                <h2 class="text-2xl font-bold mb-4 text-luna-purple-soft">Dokumentasjon</h2>
+                <div class="space-y-6">
+                    <div>
+                        <h3 class="text-lg font-semibold mb-2">Last opp Bilde/Video</h3>
+                        <label for="file-upload" class="w-full flex items-center justify-center px-4 py-3 bg-luna-pink-deep text-white rounded-lg cursor-pointer hover:bg-pink-700 transition-colors">
+                            <i data-lucide="upload" class="mr-2"></i>
+                            <span>Velg fil (Simulert)</span>
+                        </label>
+                        <input id="file-upload" type="file" class="hidden">
+                        <p class="text-sm text-gray-500 mt-1">Dette er en simulering og laster ikke opp filen.</p>
+                    </div>
+
+                    <div>
+                        <h3 class="text-lg font-semibold mb-2">Min Isadora-Dagbok</h3>
+                        <textarea id="diary-entry" class="w-full h-40 p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-400 focus:border-transparent" placeholder="Skriv ned dine refleksjoner, følelser og erfaringer..."></textarea>
+                        <div class="flex space-x-2 mt-2">
+                            <button id="save-diary-button" class="flex-1 px-4 py-2 bg-luna-green text-white rounded-lg hover:bg-green-700 transition-colors">Lagre Notat</button>
+                            <button id="get-reflection-button" class="flex-1 px-4 py-2 bg-luna-purple-soft text-white rounded-lg hover:bg-purple-600 transition-colors flex items-center justify-center disabled:bg-purple-300 disabled:cursor-not-allowed" disabled>
+                                ✨ Få Lunas Refleksjon
+                            </button>
+                        </div>
+                        <div id="reflection-container" class="mt-4 p-4 bg-purple-50 rounded-lg border-l-4 border-luna-purple-soft hidden">
+                            <!-- AI-refleksjon vises her -->
+                        </div>
+                    </div>
+
+                     <div>
+                        <h3 class="text-lg font-semibold mb-2">Min Historikk</h3>
+                        <div id="history-gallery" class="bg-gray-50 p-3 rounded-lg min-h-[100px]">
+                           <p class="text-gray-400">Dine lagrede notater vil vises her.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Luna Chat Siden -->
+            <div id="page-chat" class="page h-full flex flex-col">
+                <h2 class="text-2xl font-bold mb-4 text-luna-purple-soft">Chat med Luna ✨</h2>
+                <div class="flex-grow bg-gray-50 rounded-lg p-4 overflow-y-auto chat-messages flex flex-col space-y-4">
+                    <!-- Chat meldinger -->
+                    <div class="flex items-start">
+                        <div class="w-10 h-10 rounded-full bg-luna-purple-soft flex items-center justify-center text-white font-bold mr-3 flex-shrink-0">L</div>
+                        <div class="bg-purple-100 text-gray-800 p-3 rounded-lg rounded-bl-none max-w-xs">
+                            <p>Hei Isadora. Jeg er her for deg, drevet av en dypere forståelse. Hva tenker du på?</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="mt-4 flex">
+                    <input type="text" id="chat-input" class="flex-grow border border-gray-300 rounded-l-lg p-3 focus:ring-2 focus:ring-purple-400 focus:border-transparent" placeholder="Skriv din melding...">
+                    <button id="chat-send" class="bg-luna-purple-soft text-white px-5 rounded-r-lg hover:bg-purple-600 transition-colors flex items-center justify-center">
+                        <i data-lucide="send" class="h-5 w-5"></i>
+                    </button>
+                </div>
+            </div>
+             <!-- Min Garderobe Siden -->
+            <div id="page-garderobe" class="page">
+                <h2 class="text-2xl font-bold mb-4 text-luna-purple-soft">Min Garderobe</h2>
+                <div class="text-center py-10 px-4 bg-gray-50 rounded-lg">
+                    <i data-lucide="shirt" class="mx-auto h-12 w-12 text-gray-400"></i>
+                    <h3 class="mt-2 text-sm font-medium text-gray-900">Fremtidig Utvidelse</h3>
+                    <p class="mt-1 text-sm text-gray-500">Her vil du kunne katalogisere dine feminine plagg og lage en ønskeliste.</p>
+                </div>
+            </div>
+        </main>
+
+        <!-- Bunn Navigasjon -->
+        <nav class="w-full bg-white border-t border-gray-200 p-2 flex justify-around sticky bottom-0">
+            <button data-page="hjem" class="nav-btn flex flex-col items-center text-luna-purple-soft p-2 rounded-lg">
+                <i data-lucide="home"></i><span class="text-xs mt-1">Hjem</span>
+            </button>
+            <button data-page="tasks" class="nav-btn flex flex-col items-center text-gray-500 p-2 rounded-lg">
+                <i data-lucide="check-square"></i><span class="text-xs mt-1">Tasks</span>
+            </button>
+            <button data-page="rewards" class="nav-btn flex flex-col items-center text-gray-500 p-2 rounded-lg">
+                <i data-lucide="star"></i><span class="text-xs mt-1">Belønninger</span>
+            </button>
+            <button data-page="docs" class="nav-btn flex flex-col items-center text-gray-500 p-2 rounded-lg">
+                <i data-lucide="file-text"></i><span class="text-xs mt-1">Dokumentasjon</span>
+            </button>
+            <button data-page="chat" class="nav-btn flex flex-col items-center text-gray-500 p-2 rounded-lg">
+                <i data-lucide="message-circle"></i><span class="text-xs mt-1">Chat</span>
+            </button>
+             <button data-page="garderobe" class="nav-btn flex flex-col items-center text-gray-500 p-2 rounded-lg">
+                <i data-lucide="hanger"></i><span class="text-xs mt-1">Garderobe</span>
+            </button>
+        </nav>
+    </div>
+
+    <script type="module">
+        // Initialiserer Lucide ikoner
+        lucide.createIcons();
+
+        // App State (Data)
+        const appState = {
+            points: 50,
+            level: 1,
+            levelName: "Nybegynner Sissy",
+            tasks: {
+                morgen: { name: "Morgenrituale", details: "Kjenn BHen. Perfekt holdning: skuldre ned, rygg rett. Myke hender. Klar til å skinne. Affirmasjoner!", done: false, points: 10 },
+                dag: { name: "Holdningssjekk", details: "Midt på dagen, sjekk holdningen din. Er ryggen rett? Er bevegelsene dine myke og feminine?", done: false, points: 10 },
+                ettermiddag: { name: "Feminin Refleksjon", details: "Ta 5 minutter til å tenke på en feminin egenskap du beundrer og hvordan du kan uttrykke den.", done: false, points: 10 },
+                kveld: { name: "Kveldspleie", details: "Ta vare på huden din. Bruk en fuktighetskrem, og nyt følelsen av mykhet.", done: false, points: 10 }
+            },
+            rewards: [
+                { id: 1, name: "Virtuell Godkjenning", cost: 25, description: "Et anerkjennende nikk fra Luna for din innsats.", purchased: false },
+                { id: 2, name: "Friminutt for Fantasi", cost: 100, description: "Tillatelse til 15 minutter med dagdrømming om din Isadora-fremtid.", purchased: false },
+                { id: 3, name: "Ekstra Motivasjon", cost: 150, description: "Et spesielt, personlig sitat fra Luna bare for deg.", purchased: false }
+            ],
+            diaryEntries: [],
+            motivationalQuotes: [
+                "Hver minste bevegelse former din Isadora. Du er vakker i din dedikasjon.",
+                "Disiplin er broen mellom mål og virkelighet. Du bygger den nå.",
+                "Omfavn mykheten. Den er din største styrke.",
+                "Du er et kunstverk i prosess. Nyt hver eneste penselstrøk.",
+                "Ekte femininitet kommer innenfra og stråler utover. La din skinne."
+            ],
+            levels: {
+                1: { name: "Nybegynner Sissy", threshold: 0 },
+                2: { name: "Dedikert Elev", threshold: 1000 },
+                3: { name: "Blomstrende Isadora", threshold: 2500 },
+            },
+            chatHistory: [
+                { role: "model", parts: [{ text: "Hei Isadora. Jeg er her for deg, drevet av en dypere forståelse. Hva tenker du på?" }] }
+            ]
+        };
+
+        // --- GEMINI API FUNKSJONALITET ---
+        const apiKey = ""; // La stå tom, blir håndtert av rammeverket
+
+        async function callGemini(prompt, history) {
+            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
+            
+            let contents = [];
+            if (history) {
+                contents = [...history];
+            }
+            contents.push({ role: "user", parts: [{ text: prompt }] });
+
+            const payload = { contents };
+
+            try {
+                const response = await fetch(apiUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                if (!response.ok) {
+                    const errorBody = await response.text();
+                    console.error("API Error Response:", errorBody);
+                    throw new Error(`API call failed with status: ${response.status}`);
+                }
+
+                const result = await response.json();
+
+                if (result.candidates && result.candidates.length > 0 &&
+                    result.candidates[0].content && result.candidates[0].content.parts &&
+                    result.candidates[0].content.parts.length > 0) {
+                    return result.candidates[0].content.parts[0].text;
+                } else {
+                    console.error("Unexpected API response structure:", result);
+                    return "Beklager, jeg klarte ikke å behandle det akkurat nå. Prøv igjen.";
+                }
+            } catch (error) {
+                console.error("Error calling Gemini API:", error);
+                return "Det oppstod en feil. Vennligst sjekk konsollen for detaljer.";
+            }
+        }
+
+
+        // --- DOM elementer ---
+        const pages = document.querySelectorAll('.page');
+        const navButtons = document.querySelectorAll('.nav-btn');
+        const pointsDisplays = [
+            document.getElementById('points-display-main'),
+            document.getElementById('points-display-header'),
+            document.getElementById('rewards-points-total')
+        ];
+        const levelDisplays = [
+            document.getElementById('level-display-header'),
+            document.getElementById('rewards-level')
+        ];
+        const taskListContainer = document.getElementById('task-list');
+        const rewardsStoreContainer = document.getElementById('rewards-store');
+        const levelProgressBar = document.getElementById('level-progress-bar');
+        const nextLevelTargetDisplay = document.getElementById('next-level-target');
+        const nextTaskDisplay = document.getElementById('next-task-display');
+        const motivationalQuoteDisplay = document.getElementById('motivational-quote');
+
+        // --- Funksjoner ---
+        function navigateTo(pageId) {
+            pages.forEach(page => page.classList.remove('active'));
+            const activePage = document.getElementById(`page-${pageId}`);
+            if (activePage) activePage.classList.add('active');
+            
+            navButtons.forEach(btn => {
+                btn.classList.toggle('text-luna-purple-soft', btn.dataset.page === pageId);
+                btn.classList.toggle('text-gray-500', btn.dataset.page !== pageId);
+            });
+        }
+
+        function updateUI() {
+            pointsDisplays.forEach(el => el.textContent = appState.points);
+            levelDisplays.forEach(el => el.textContent = appState.level);
+            
+            checkLevelUp();
+            const currentLevelInfo = appState.levels[appState.level];
+            const nextLevelInfo = appState.levels[appState.level + 1];
+
+            if(nextLevelInfo) {
+                const progress = ((appState.points - currentLevelInfo.threshold) / (nextLevelInfo.threshold - currentLevelInfo.threshold)) * 100;
+                levelProgressBar.style.width = `${Math.max(0, Math.min(100, progress))}%`;
+                nextLevelTargetDisplay.textContent = `${nextLevelInfo.threshold}p`;
+            } else {
+                levelProgressBar.style.width = '100%';
+                nextLevelTargetDisplay.textContent = 'Maks';
+            }
+
+            const firstUnfinishedTask = Object.values(appState.tasks).find(task => !task.done);
+            nextTaskDisplay.textContent = firstUnfinishedTask ? firstUnfinishedTask.name : "Alle tasks fullført!";
+
+            renderTasks();
+            renderRewards();
+        }
+
+        function checkLevelUp() {
+            const nextLevel = appState.level + 1;
+            if (appState.levels[nextLevel] && appState.points >= appState.levels[nextLevel].threshold) {
+                appState.level = nextLevel;
+                appState.levelName = appState.levels[nextLevel].name;
+                alert(`Gratulerer! Du har nådd Nivå ${appState.level}: ${appState.levelName}!`);
+            }
+        }
+
+        function renderTasks() {
+            taskListContainer.innerHTML = '';
+            Object.entries(appState.tasks).forEach(([key, task]) => {
+                const taskEl = document.createElement('div');
+                taskEl.className = `p-4 rounded-lg flex items-center transition-all ${task.done ? 'bg-green-100 text-gray-500' : 'bg-white shadow-sm'}`;
+                taskEl.innerHTML = `
+                    <input type="checkbox" id="task-${key}" class="h-6 w-6 rounded-full border-gray-300 text-luna-pink-deep focus:ring-luna-purple-soft" ${task.done ? 'checked' : ''}>
+                    <div class="ml-4 flex-grow">
+                        <label for="task-${key}" class="font-semibold ${task.done ? 'line-through' : ''}">${task.name}</label>
+                        <p class="text-sm">${task.details}</p>
+                    </div>
+                    <span class="font-bold text-luna-green">
