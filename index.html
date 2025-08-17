@@ -119,21 +119,36 @@
                     <!-- Belønninger blir generert av JavaScript -->
                 </div>
             </div>
-
+            
+            <!-- NY SIDE: Inspirasjon -->
+            <div id="page-inspiration" class="page">
+                <h2 class="text-2xl font-bold mb-4 text-luna-purple-soft">Visuell Inspirasjon ✨</h2>
+                <div class="space-y-6">
+                    <div>
+                        <p class="text-sm text-gray-600 mb-3">Lagre et bilde fra Pinterest som inspirerer deg, og last det opp her. Luna vil se på det og skape en personlig utfordring bare for deg.</p>
+                        
+                        <div class="bg-gray-50 border-2 border-dashed border-gray-300 rounded-lg p-6 text-center">
+                            <img id="image-preview" class="hidden max-h-48 mx-auto rounded-lg mb-4" alt="Forhåndsvisning av bilde"/>
+                            <label for="image-upload" class="w-full flex items-center justify-center px-4 py-3 bg-luna-pink-deep text-white rounded-lg cursor-pointer hover:bg-pink-700 transition-colors">
+                                <i data-lucide="image-plus" class="mr-2"></i>
+                                <span id="upload-label">Velg et bilde</span>
+                            </label>
+                            <input id="image-upload" type="file" class="hidden" accept="image/*">
+                        </div>
+                        
+                        <button id="generate-inspiration-button" class="w-full mt-4 px-4 py-3 bg-luna-purple-soft text-white rounded-lg hover:bg-purple-600 transition-colors flex items-center justify-center disabled:bg-purple-300 disabled:cursor-not-allowed" disabled>
+                            <i data-lucide="sparkles" class="mr-2"></i>
+                            Lag utfordring fra bilde
+                        </button>
+                    </div>
+                    <div id="inspiration-challenge-container" class="mt-4"></div>
+                </div>
+            </div>
+            
             <!-- Dokumentasjon Siden -->
             <div id="page-docs" class="page">
                 <h2 class="text-2xl font-bold mb-4 text-luna-purple-soft">Dokumentasjon</h2>
                 <div class="space-y-6">
-                    <div>
-                        <h3 class="text-lg font-semibold mb-2">Last opp Bilde/Video</h3>
-                        <label for="file-upload" class="w-full flex items-center justify-center px-4 py-3 bg-luna-pink-deep text-white rounded-lg cursor-pointer hover:bg-pink-700 transition-colors">
-                            <i data-lucide="upload" class="mr-2"></i>
-                            <span>Velg fil (Simulert)</span>
-                        </label>
-                        <input id="file-upload" type="file" class="hidden">
-                        <p class="text-sm text-gray-500 mt-1">Dette er en simulering og laster ikke opp filen.</p>
-                    </div>
-
                     <div>
                         <h3 class="text-lg font-semibold mb-2">Min Isadora-Dagbok</h3>
                         <textarea id="diary-entry" class="w-full h-40 p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-400 focus:border-transparent" placeholder="Skriv ned dine refleksjoner, følelser og erfaringer..."></textarea>
@@ -176,7 +191,8 @@
                     </button>
                 </div>
             </div>
-             <!-- Min Garderobe Siden -->
+
+            <!-- Min Garderobe Siden -->
             <div id="page-garderobe" class="page">
                 <h2 class="text-2xl font-bold mb-4 text-luna-purple-soft">Min Garderobe</h2>
                 <div class="text-center py-10 px-4 bg-gray-50 rounded-lg">
@@ -195,16 +211,19 @@
             <button data-page="tasks" class="nav-btn flex flex-col items-center text-gray-500 p-2 rounded-lg">
                 <i data-lucide="check-square"></i><span class="text-xs mt-1">Tasks</span>
             </button>
+             <button data-page="inspiration" class="nav-btn flex flex-col items-center text-gray-500 p-2 rounded-lg">
+                <i data-lucide="camera"></i><span class="text-xs mt-1">Inspirasjon</span>
+            </button>
             <button data-page="rewards" class="nav-btn flex flex-col items-center text-gray-500 p-2 rounded-lg">
                 <i data-lucide="star"></i><span class="text-xs mt-1">Belønninger</span>
             </button>
-            <button data-page="docs" class="nav-btn flex flex-col items-center text-gray-500 p-2 rounded-lg">
+             <button data-page="docs" class="nav-btn flex flex-col items-center text-gray-500 p-2 rounded-lg">
                 <i data-lucide="file-text"></i><span class="text-xs mt-1">Dokumentasjon</span>
             </button>
             <button data-page="chat" class="nav-btn flex flex-col items-center text-gray-500 p-2 rounded-lg">
                 <i data-lucide="message-circle"></i><span class="text-xs mt-1">Chat</span>
             </button>
-             <button data-page="garderobe" class="nav-btn flex flex-col items-center text-gray-500 p-2 rounded-lg">
+            <button data-page="garderobe" class="nav-btn flex flex-col items-center text-gray-500 p-2 rounded-lg">
                 <i data-lucide="hanger"></i><span class="text-xs mt-1">Garderobe</span>
             </button>
         </nav>
@@ -227,8 +246,7 @@
             },
             rewards: [
                 { id: 1, name: "Virtuell Godkjenning", cost: 25, description: "Et anerkjennende nikk fra Luna for din innsats.", purchased: false },
-                { id: 2, name: "Friminutt for Fantasi", cost: 100, description: "Tillatelse til 15 minutter med dagdrømming om din Isadora-fremtid.", purchased: false },
-                { id: 3, name: "Ekstra Motivasjon", cost: 150, description: "Et spesielt, personlig sitat fra Luna bare for deg.", purchased: false }
+                { id: 2, name: "Friminutt for Fantasi", cost: 100, description: "Tillatelse til 15 minutter med dagdrømming om din Isadora-fremtid.", purchased: false }
             ],
             diaryEntries: [],
             motivationalQuotes: [
@@ -245,7 +263,8 @@
             },
             chatHistory: [
                 { role: "model", parts: [{ text: "Hei Isadora. Jeg er her for deg, drevet av en dypere forståelse. Hva tenker du på?" }] }
-            ]
+            ],
+            inspirationImage: null // For base64-data
         };
 
         // --- GEMINI API FUNKSJONALITET ---
@@ -253,16 +272,27 @@
 
         async function callGemini(prompt, history) {
             const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
-            
-            let contents = [];
-            if (history) {
-                contents = [...history];
-            }
+            let contents = history ? [...history] : [];
             contents.push({ role: "user", parts: [{ text: prompt }] });
-
             const payload = { contents };
+            return sendApiRequest(apiUrl, payload);
+        }
+        
+        async function callGeminiVision(prompt, base64ImageData) {
+            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent?key=${apiKey}`;
+            const payload = {
+                contents: [{
+                    parts: [
+                        { text: prompt },
+                        { inline_data: { mime_type: "image/jpeg", data: base64ImageData } }
+                    ]
+                }]
+            };
+            return sendApiRequest(apiUrl, payload);
+        }
 
-            try {
+        async function sendApiRequest(apiUrl, payload) {
+             try {
                 const response = await fetch(apiUrl, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
@@ -367,4 +397,249 @@
                         <label for="task-${key}" class="font-semibold ${task.done ? 'line-through' : ''}">${task.name}</label>
                         <p class="text-sm">${task.details}</p>
                     </div>
-                    <span class="font-bold text-luna-green">
+                    <span class="font-bold text-luna-green">+${task.points}p</span>
+                `;
+                
+                const checkbox = taskEl.querySelector(`#task-${key}`);
+                checkbox.addEventListener('change', () => {
+                    if (checkbox.checked && !appState.tasks[key].done) {
+                        appState.tasks[key].done = true;
+                        appState.points += task.points;
+                    } else if (!checkbox.checked && appState.tasks[key].done) {
+                        appState.tasks[key].done = false;
+                        appState.points -= task.points;
+                    }
+                    updateUI();
+                });
+                taskListContainer.appendChild(taskEl);
+            });
+        }
+        
+        function renderRewards() {
+            rewardsStoreContainer.innerHTML = '';
+            appState.rewards.forEach(reward => {
+                const canAfford = appState.points >= reward.cost;
+                const rewardEl = document.createElement('div');
+                rewardEl.className = `p-4 rounded-lg shadow-sm flex flex-col justify-between ${reward.purchased ? 'bg-gray-200' : 'bg-white'}`;
+                rewardEl.innerHTML = `
+                    <div>
+                        <h4 class="font-bold text-lg ${reward.purchased ? 'text-gray-500' : 'text-luna-purple-soft'}">${reward.name}</h4>
+                        <p class="text-sm text-gray-600 mb-2">${reward.description}</p>
+                    </div>
+                    <button data-id="${reward.id}" class="buy-reward-btn w-full mt-3 py-2 px-4 rounded-lg text-white font-semibold transition-colors ${
+                        reward.purchased 
+                        ? 'bg-gray-400 cursor-not-allowed' 
+                        : canAfford 
+                            ? 'bg-luna-green hover:bg-green-600' 
+                            : 'bg-gray-400 cursor-not-allowed'
+                    }" ${reward.purchased || !canAfford ? 'disabled' : ''}>
+                        ${reward.purchased ? 'Kjøpt' : `Kjøp for ${reward.cost}p`}
+                    </button>
+                `;
+                rewardsStoreContainer.appendChild(rewardEl);
+            });
+        }
+        
+        function buyReward(rewardId) {
+            const reward = appState.rewards.find(r => r.id === rewardId);
+            if (reward && !reward.purchased && appState.points >= reward.cost) {
+                appState.points -= reward.cost;
+                reward.purchased = true;
+                alert(`Du har låst opp "${reward.name}"!`);
+                updateUI();
+            }
+        }
+        
+        function updateQuote() {
+            const randomIndex = Math.floor(Math.random() * appState.motivationalQuotes.length);
+            motivationalQuoteDisplay.textContent = `"${appState.motivationalQuotes[randomIndex]}"`;
+        }
+
+        // --- Event Listeners ---
+        navButtons.forEach(btn => {
+            btn.addEventListener('click', () => navigateTo(btn.dataset.page));
+        });
+        
+        rewardsStoreContainer.addEventListener('click', (e) => {
+            if (e.target.classList.contains('buy-reward-btn')) {
+                buyReward(parseInt(e.target.dataset.id));
+            }
+        });
+
+        // --- Chat Funksjonalitet ---
+        const chatSendBtn = document.getElementById('chat-send');
+        const chatInput = document.getElementById('chat-input');
+        const chatMessagesContainer = document.querySelector('.chat-messages');
+
+        function addChatMessage(message, sender, isLoading = false) {
+            const messageWrapper = document.createElement('div');
+            let content;
+
+            if (isLoading) {
+                content = `<div class="loader"></div>`;
+            } else {
+                content = `<p>${message.replace(/\n/g, '<br>')}</p>`;
+            }
+
+            if (sender === 'user') {
+                messageWrapper.className = "flex items-start justify-end";
+                messageWrapper.innerHTML = `
+                    <div class="bg-luna-pink-deep text-white p-3 rounded-lg rounded-br-none max-w-xs">
+                        ${content}
+                    </div>
+                    <div class="w-10 h-10 rounded-full bg-pink-200 flex items-center justify-center text-pink-700 font-bold ml-3 flex-shrink-0">I</div>
+                `;
+            } else { // 'luna'
+                messageWrapper.id = isLoading ? 'loading-bubble' : '';
+                messageWrapper.className = "flex items-start";
+                messageWrapper.innerHTML = `
+                    <div class="w-10 h-10 rounded-full bg-luna-purple-soft flex items-center justify-center text-white font-bold mr-3 flex-shrink-0">L</div>
+                    <div class="bg-purple-100 text-gray-800 p-3 rounded-lg rounded-bl-none max-w-xs">
+                        ${content}
+                    </div>
+                `;
+            }
+            chatMessagesContainer.appendChild(messageWrapper);
+            chatMessagesContainer.scrollTop = chatMessagesContainer.scrollHeight;
+        }
+        
+        async function handleChatSend() {
+            const userInput = chatInput.value.trim();
+            if (userInput) {
+                chatInput.value = '';
+                addChatMessage(userInput, 'user');
+                appState.chatHistory.push({ role: "user", parts: [{ text: userInput }] });
+
+                addChatMessage('', 'luna', true);
+                chatSendBtn.disabled = true;
+
+                const personaPrompt = `You are Luna, a supportive, elegant, and firm sissy guide. Your name is Luna. The user's name is Isadora. Continue this conversation in a motivating and feminine tone, speaking in Norwegian.`;
+                const fullPrompt = `${personaPrompt}\n\n${userInput}`;
+                
+                const lunaResponse = await callGemini(fullPrompt, appState.chatHistory.slice(0, -1));
+                
+                document.getElementById('loading-bubble')?.remove();
+
+                addChatMessage(lunaResponse, 'luna');
+                appState.chatHistory.push({ role: "model", parts: [{ text: lunaResponse }] });
+                chatSendBtn.disabled = false;
+            }
+        }
+
+        chatSendBtn.addEventListener('click', handleChatSend);
+        chatInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') handleChatSend();
+        });
+        
+        // --- Dokumentasjon Funksjonalitet ---
+        const saveDiaryBtn = document.getElementById('save-diary-button');
+        const diaryInput = document.getElementById('diary-entry');
+        const historyGallery = document.getElementById('history-gallery');
+        const getReflectionBtn = document.getElementById('get-reflection-button');
+        const reflectionContainer = document.getElementById('reflection-container');
+
+        diaryInput.addEventListener('input', () => {
+            getReflectionBtn.disabled = diaryInput.value.trim().length === 0;
+        });
+
+        saveDiaryBtn.addEventListener('click', () => {
+            const entryText = diaryInput.value.trim();
+            if (entryText) {
+                const newEntry = { type: 'diary', date: new Date(), content: entryText };
+                appState.diaryEntries.unshift(newEntry);
+                diaryInput.value = '';
+                getReflectionBtn.disabled = true;
+                alert('Dagboknotat lagret!');
+                renderHistory();
+            }
+        });
+
+        getReflectionBtn.addEventListener('click', async () => {
+            const entryText = diaryInput.value.trim();
+            if (!entryText) return;
+
+            reflectionContainer.classList.remove('hidden');
+            reflectionContainer.innerHTML = '<div class="flex justify-center items-center"><div class="loader"></div><p class="ml-3">Luna reflekterer...</p></div>';
+            getReflectionBtn.disabled = true;
+
+            const prompt = `You are Luna, a supportive, elegant, and firm sissy guide. Your name is Luna. The user, Isadora, has just written this diary entry. Read it and provide a short, encouraging, and insightful reflection on her feelings and progress. Respond directly to Isadora in Norwegian. Diary Entry: "${entryText}"`;
+            
+            const reflectionText = await callGemini(prompt, null);
+
+            reflectionContainer.innerHTML = `<p>${reflectionText.replace(/\n/g, '<br>')}</p>`;
+            getReflectionBtn.disabled = false;
+        });
+        
+        function renderHistory() {
+            historyGallery.innerHTML = '';
+            if (appState.diaryEntries.length === 0) {
+                 historyGallery.innerHTML = '<p class="text-gray-400">Dine lagrede notater vil vises her.</p>';
+                 return;
+            }
+            appState.diaryEntries.forEach(entry => {
+                const entryEl = document.createElement('div');
+                entryEl.className = 'bg-white p-3 rounded-lg shadow-sm mb-2';
+                entryEl.innerHTML = `
+                    <p class="text-sm text-gray-500">${entry.date.toLocaleDateString('no-NO')} - ${entry.date.toLocaleTimeString('no-NO')}</p>
+                    <p class="mt-1">${entry.content.replace(/\n/g, '<br>')}</p>
+                `;
+                historyGallery.appendChild(entryEl);
+            });
+        }
+
+        // --- Inspirasjon Funksjonalitet ---
+        const imageUploadInput = document.getElementById('image-upload');
+        const imagePreview = document.getElementById('image-preview');
+        const uploadLabel = document.getElementById('upload-label');
+        const generateInspirationBtn = document.getElementById('generate-inspiration-button');
+        const inspirationChallengeContainer = document.getElementById('inspiration-challenge-container');
+
+        imageUploadInput.addEventListener('change', (event) => {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    imagePreview.src = e.target.result;
+                    imagePreview.classList.remove('hidden');
+                    appState.inspirationImage = e.target.result.split(',')[1]; // Lagre kun base64-data
+                    uploadLabel.textContent = file.name;
+                    generateInspirationBtn.disabled = false;
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+        generateInspirationBtn.addEventListener('click', async () => {
+            if (!appState.inspirationImage) {
+                alert("Vennligst last opp et bilde først.");
+                return;
+            }
+
+            inspirationChallengeContainer.innerHTML = '<div class="flex justify-center items-center p-4"><div class="loader"></div><p class="ml-3">Luna ser på bildet ditt og tenker...</p></div>';
+            generateInspirationBtn.disabled = true;
+
+            const prompt = `Du er Luna, en kreativ og elegant sissy-veileder. Brukeren din, Isadora, har lastet opp et bilde for inspirasjon. Se nøye på bildet – fargene, stemningen, klærne, omgivelsene. Basert på det du ser, lag en unik, feminin og oppnåelig utfordring for henne. Utfordringen skal hjelpe henne med å utforske sin Isadora-identitet. Svar direkte til henne på norsk.`;
+
+            const challengeText = await callGeminiVision(prompt, appState.inspirationImage);
+
+            inspirationChallengeContainer.innerHTML = `
+                <div class="p-4 rounded-lg bg-pink-50 border-l-4 border-luna-pink-deep">
+                    <p>${challengeText.replace(/\n/g, '<br>')}</p>
+                </div>
+            `;
+            generateInspirationBtn.disabled = false;
+        });
+
+
+        // --- Initialisering ---
+        function initialize() {
+            navigateTo('hjem');
+            updateUI();
+            updateQuote();
+            setInterval(updateQuote, 30000);
+        }
+
+        initialize();
+    </script>
+</body>
+</html>
