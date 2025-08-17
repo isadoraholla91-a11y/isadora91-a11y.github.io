@@ -11,9 +11,8 @@
     <style>
         body {
             font-family: 'Inter', sans-serif;
-            background-color: #f8f7fa; /* Lys, nesten hvit bakgrunn */
+            background-color: #f8f7fa;
         }
-        /* Definerer fargepaletten fra planen din for enklere bruk */
         .bg-luna-pink-deep { background-color: #d81b60; }
         .text-luna-pink-deep { color: #d81b60; }
         .border-luna-pink-deep { border-color: #d81b60; }
@@ -22,26 +21,14 @@
         .bg-luna-green { background-color: #43a047; }
         .text-luna-green { color: #43a047; }
         
-        /* For å skjule/vise sider */
         .page { display: none; }
         .page.active { display: block; }
 
-        /* Custom scrollbar for chat */
-        .chat-messages::-webkit-scrollbar {
-            width: 6px;
-        }
-        .chat-messages::-webkit-scrollbar-track {
-            background: #f1f1f1;
-        }
-        .chat-messages::-webkit-scrollbar-thumb {
-            background: #c4b5fd;
-            border-radius: 6px;
-        }
-        .chat-messages::-webkit-scrollbar-thumb:hover {
-            background: #a78bfa;
-        }
+        .chat-messages::-webkit-scrollbar { width: 6px; }
+        .chat-messages::-webkit-scrollbar-track { background: #f1f1f1; }
+        .chat-messages::-webkit-scrollbar-thumb { background: #c4b5fd; border-radius: 6px; }
+        .chat-messages::-webkit-scrollbar-thumb:hover { background: #a78bfa; }
 
-        /* Lasteindikator spinner */
         .loader {
             border: 4px solid #f3f3f3;
             border-top: 4px solid #ab47bc;
@@ -54,6 +41,10 @@
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
         }
+        
+        #offline-indicator {
+            transition: opacity 0.5s, transform 0.5s;
+        }
     </style>
 </head>
 <body class="bg-gray-100 text-gray-800">
@@ -61,16 +52,21 @@
     <div id="app-container" class="max-w-md mx-auto min-h-screen bg-white shadow-2xl flex flex-col">
         
         <!-- Topp Header -->
-        <header class="p-4 flex justify-between items-center bg-white border-b border-gray-200 sticky top-0 z-10">
-            <div id="header-left">
+        <header class="p-4 flex justify-between items-center bg-white border-b border-gray-200 sticky top-0 z-20">
+            <div>
                 <h1 class="text-xl font-bold text-luna-purple-soft">Luna</h1>
                 <p class="text-sm text-gray-500">Din Sissy-Veileder</p>
             </div>
-             <div id="header-right" class="text-right">
+             <div class="text-right">
                 <p class="font-semibold text-luna-pink-deep">Nivå <span id="level-display-header">1</span></p>
                 <p class="text-sm text-gray-500"><span id="points-display-header">50</span> poeng</p>
             </div>
         </header>
+        
+        <!-- Offline Indikator -->
+        <div id="offline-indicator" class="bg-gray-700 text-white text-center py-1 text-xs opacity-0 transform -translate-y-full fixed top-0 w-full max-w-md z-10">
+            Du er offline. AI-funksjoner er deaktivert.
+        </div>
 
         <main class="flex-grow p-4 overflow-y-auto">
             <!-- Hjem Siden -->
@@ -81,12 +77,10 @@
                         <p id="points-display-main" class="text-5xl font-bold text-luna-pink-deep">50</p>
                     </div>
                 </div>
-
                 <div class="text-center mb-8">
                     <h2 class="text-lg font-semibold text-gray-700">Neste Task:</h2>
                     <p id="next-task-display" class="text-xl text-luna-purple-soft">Kjenn BHen</p>
                 </div>
-
                 <div class="p-4 bg-gray-50 rounded-lg text-center">
                     <p id="motivational-quote" class="text-gray-600 italic">"Hver minste bevegelse former din Isadora. Du er vakker i din dedikasjon."</p>
                 </div>
@@ -95,9 +89,7 @@
             <!-- Daglige Tasks Siden -->
             <div id="page-tasks" class="page">
                 <h2 class="text-2xl font-bold mb-4 text-luna-purple-soft">Mine Daglige Tasks</h2>
-                <div id="task-list" class="space-y-3">
-                    <!-- Tasks blir generert av JavaScript -->
-                </div>
+                <div id="task-list" class="space-y-3"></div>
             </div>
 
             <!-- Poeng & Belønninger Siden -->
@@ -113,20 +105,16 @@
                     </div>
                     <p class="text-center text-sm mt-1">Nivå <span id="rewards-level">1</span>: Nybegynner Sissy</p>
                 </div>
-
                 <h3 class="text-xl font-semibold mb-3">Belønningsbutikk</h3>
-                <div id="rewards-store" class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <!-- Belønninger blir generert av JavaScript -->
-                </div>
+                <div id="rewards-store" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
             </div>
             
-            <!-- NY SIDE: Inspirasjon -->
+            <!-- Inspirasjon Siden -->
             <div id="page-inspiration" class="page">
-                <h2 class="text-2xl font-bold mb-4 text-luna-purple-soft">Visuell Inspirasjon ✨</h2>
+                <h2 class="text-2xl font-bold mb-4 text-luna-purple-soft">Visuell Inspirasjon <span class="ai-feature-indicator text-base">✨</span></h2>
                 <div class="space-y-6">
                     <div>
                         <p class="text-sm text-gray-600 mb-3">Lagre et bilde fra Pinterest som inspirerer deg, og last det opp her. Luna vil se på det og skape en personlig utfordring bare for deg.</p>
-                        
                         <div class="bg-gray-50 border-2 border-dashed border-gray-300 rounded-lg p-6 text-center">
                             <img id="image-preview" class="hidden max-h-48 mx-auto rounded-lg mb-4" alt="Forhåndsvisning av bilde"/>
                             <label for="image-upload" class="w-full flex items-center justify-center px-4 py-3 bg-luna-pink-deep text-white rounded-lg cursor-pointer hover:bg-pink-700 transition-colors">
@@ -135,8 +123,7 @@
                             </label>
                             <input id="image-upload" type="file" class="hidden" accept="image/*">
                         </div>
-                        
-                        <button id="generate-inspiration-button" class="w-full mt-4 px-4 py-3 bg-luna-purple-soft text-white rounded-lg hover:bg-purple-600 transition-colors flex items-center justify-center disabled:bg-purple-300 disabled:cursor-not-allowed" disabled>
+                        <button id="generate-inspiration-button" class="ai-button w-full mt-4 px-4 py-3 bg-luna-purple-soft text-white rounded-lg hover:bg-purple-600 transition-colors flex items-center justify-center disabled:bg-purple-300 disabled:cursor-not-allowed" disabled>
                             <i data-lucide="sparkles" class="mr-2"></i>
                             Lag utfordring fra bilde
                         </button>
@@ -154,15 +141,12 @@
                         <textarea id="diary-entry" class="w-full h-40 p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-400 focus:border-transparent" placeholder="Skriv ned dine refleksjoner, følelser og erfaringer..."></textarea>
                         <div class="flex space-x-2 mt-2">
                             <button id="save-diary-button" class="flex-1 px-4 py-2 bg-luna-green text-white rounded-lg hover:bg-green-700 transition-colors">Lagre Notat</button>
-                            <button id="get-reflection-button" class="flex-1 px-4 py-2 bg-luna-purple-soft text-white rounded-lg hover:bg-purple-600 transition-colors flex items-center justify-center disabled:bg-purple-300 disabled:cursor-not-allowed" disabled>
-                                ✨ Få Lunas Refleksjon
+                            <button id="get-reflection-button" class="ai-button flex-1 px-4 py-2 bg-luna-purple-soft text-white rounded-lg hover:bg-purple-600 transition-colors flex items-center justify-center disabled:bg-purple-300 disabled:cursor-not-allowed" disabled>
+                                Få Lunas Refleksjon <span class="ai-feature-indicator text-base ml-1">✨</span>
                             </button>
                         </div>
-                        <div id="reflection-container" class="mt-4 p-4 bg-purple-50 rounded-lg border-l-4 border-luna-purple-soft hidden">
-                            <!-- AI-refleksjon vises her -->
-                        </div>
+                        <div id="reflection-container" class="mt-4 p-4 bg-purple-50 rounded-lg border-l-4 border-luna-purple-soft hidden"></div>
                     </div>
-
                      <div>
                         <h3 class="text-lg font-semibold mb-2">Min Historikk</h3>
                         <div id="history-gallery" class="bg-gray-50 p-3 rounded-lg min-h-[100px]">
@@ -174,66 +158,31 @@
 
             <!-- Luna Chat Siden -->
             <div id="page-chat" class="page h-full flex flex-col">
-                <h2 class="text-2xl font-bold mb-4 text-luna-purple-soft">Chat med Luna ✨</h2>
-                <div class="flex-grow bg-gray-50 rounded-lg p-4 overflow-y-auto chat-messages flex flex-col space-y-4">
-                    <!-- Chat meldinger -->
-                    <div class="flex items-start">
-                        <div class="w-10 h-10 rounded-full bg-luna-purple-soft flex items-center justify-center text-white font-bold mr-3 flex-shrink-0">L</div>
-                        <div class="bg-purple-100 text-gray-800 p-3 rounded-lg rounded-bl-none max-w-xs">
-                            <p>Hei Isadora. Jeg er her for deg, drevet av en dypere forståelse. Hva tenker du på?</p>
-                        </div>
-                    </div>
-                </div>
+                <h2 class="text-2xl font-bold mb-4 text-luna-purple-soft">Chat med Luna <span class="ai-feature-indicator text-base">✨</span></h2>
+                <div class="flex-grow bg-gray-50 rounded-lg p-4 overflow-y-auto chat-messages flex flex-col space-y-4"></div>
                 <div class="mt-4 flex">
                     <input type="text" id="chat-input" class="flex-grow border border-gray-300 rounded-l-lg p-3 focus:ring-2 focus:ring-purple-400 focus:border-transparent" placeholder="Skriv din melding...">
-                    <button id="chat-send" class="bg-luna-purple-soft text-white px-5 rounded-r-lg hover:bg-purple-600 transition-colors flex items-center justify-center">
+                    <button id="chat-send" class="ai-button bg-luna-purple-soft text-white px-5 rounded-r-lg hover:bg-purple-600 transition-colors flex items-center justify-center">
                         <i data-lucide="send" class="h-5 w-5"></i>
                     </button>
-                </div>
-            </div>
-
-            <!-- Min Garderobe Siden -->
-            <div id="page-garderobe" class="page">
-                <h2 class="text-2xl font-bold mb-4 text-luna-purple-soft">Min Garderobe</h2>
-                <div class="text-center py-10 px-4 bg-gray-50 rounded-lg">
-                    <i data-lucide="shirt" class="mx-auto h-12 w-12 text-gray-400"></i>
-                    <h3 class="mt-2 text-sm font-medium text-gray-900">Fremtidig Utvidelse</h3>
-                    <p class="mt-1 text-sm text-gray-500">Her vil du kunne katalogisere dine feminine plagg og lage en ønskeliste.</p>
                 </div>
             </div>
         </main>
 
         <!-- Bunn Navigasjon -->
         <nav class="w-full bg-white border-t border-gray-200 p-2 flex justify-around sticky bottom-0">
-            <button data-page="hjem" class="nav-btn flex flex-col items-center text-luna-purple-soft p-2 rounded-lg">
-                <i data-lucide="home"></i><span class="text-xs mt-1">Hjem</span>
-            </button>
-            <button data-page="tasks" class="nav-btn flex flex-col items-center text-gray-500 p-2 rounded-lg">
-                <i data-lucide="check-square"></i><span class="text-xs mt-1">Tasks</span>
-            </button>
-             <button data-page="inspiration" class="nav-btn flex flex-col items-center text-gray-500 p-2 rounded-lg">
-                <i data-lucide="camera"></i><span class="text-xs mt-1">Inspirasjon</span>
-            </button>
-            <button data-page="rewards" class="nav-btn flex flex-col items-center text-gray-500 p-2 rounded-lg">
-                <i data-lucide="star"></i><span class="text-xs mt-1">Belønninger</span>
-            </button>
-             <button data-page="docs" class="nav-btn flex flex-col items-center text-gray-500 p-2 rounded-lg">
-                <i data-lucide="file-text"></i><span class="text-xs mt-1">Dokumentasjon</span>
-            </button>
-            <button data-page="chat" class="nav-btn flex flex-col items-center text-gray-500 p-2 rounded-lg">
-                <i data-lucide="message-circle"></i><span class="text-xs mt-1">Chat</span>
-            </button>
-            <button data-page="garderobe" class="nav-btn flex flex-col items-center text-gray-500 p-2 rounded-lg">
-                <i data-lucide="hanger"></i><span class="text-xs mt-1">Garderobe</span>
-            </button>
+            <button data-page="hjem" class="nav-btn flex flex-col items-center text-luna-purple-soft p-2 rounded-lg"><i data-lucide="home"></i><span class="text-xs mt-1">Hjem</span></button>
+            <button data-page="tasks" class="nav-btn flex flex-col items-center text-gray-500 p-2 rounded-lg"><i data-lucide="check-square"></i><span class="text-xs mt-1">Tasks</span></button>
+            <button data-page="inspiration" class="nav-btn flex flex-col items-center text-gray-500 p-2 rounded-lg"><i data-lucide="camera"></i><span class="text-xs mt-1">Inspirasjon</span></button>
+            <button data-page="rewards" class="nav-btn flex flex-col items-center text-gray-500 p-2 rounded-lg"><i data-lucide="star"></i><span class="text-xs mt-1">Belønninger</span></button>
+            <button data-page="docs" class="nav-btn flex flex-col items-center text-gray-500 p-2 rounded-lg"><i data-lucide="file-text"></i><span class="text-xs mt-1">Dokumentasjon</span></button>
+            <button data-page="chat" class="nav-btn flex flex-col items-center text-gray-500 p-2 rounded-lg"><i data-lucide="message-circle"></i><span class="text-xs mt-1">Chat</span></button>
         </nav>
     </div>
 
     <script type="module">
-        // Initialiserer Lucide ikoner
         lucide.createIcons();
 
-        // App State (Data)
         const appState = {
             points: 50,
             level: 1,
@@ -252,33 +201,29 @@
             motivationalQuotes: [
                 "Hver minste bevegelse former din Isadora. Du er vakker i din dedikasjon.",
                 "Disiplin er broen mellom mål og virkelighet. Du bygger den nå.",
-                "Omfavn mykheten. Den er din største styrke.",
-                "Du er et kunstverk i prosess. Nyt hver eneste penselstrøk.",
-                "Ekte femininitet kommer innenfra og stråler utover. La din skinne."
+                "Omfavn mykheten. Den er din største styrke."
             ],
             levels: {
                 1: { name: "Nybegynner Sissy", threshold: 0 },
                 2: { name: "Dedikert Elev", threshold: 1000 },
                 3: { name: "Blomstrende Isadora", threshold: 2500 },
             },
-            chatHistory: [
-                { role: "model", parts: [{ text: "Hei Isadora. Jeg er her for deg, drevet av en dypere forståelse. Hva tenker du på?" }] }
-            ],
-            inspirationImage: null // For base64-data
+            chatHistory: [],
+            inspirationImage: null
         };
 
-        // --- GEMINI API FUNKSJONALITET ---
-        const apiKey = ""; // La stå tom, blir håndtert av rammeverket
+        const apiKey = "";
 
         async function callGemini(prompt, history) {
+            if (!navigator.onLine) return "Jeg trenger en internettforbindelse for å kunne tenke. Vennligst koble til og prøv igjen.";
             const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
             let contents = history ? [...history] : [];
             contents.push({ role: "user", parts: [{ text: prompt }] });
-            const payload = { contents };
-            return sendApiRequest(apiUrl, payload);
+            return sendApiRequest(apiUrl, { contents });
         }
         
         async function callGeminiVision(prompt, base64ImageData) {
+            if (!navigator.onLine) return "Jeg trenger en internettforbindelse for å kunne se. Vennligst koble til og prøv igjen.";
             const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent?key=${apiKey}`;
             const payload = {
                 contents: [{
@@ -298,42 +243,19 @@
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(payload)
                 });
-
-                if (!response.ok) {
-                    const errorBody = await response.text();
-                    console.error("API Error Response:", errorBody);
-                    throw new Error(`API call failed with status: ${response.status}`);
-                }
-
+                if (!response.ok) throw new Error(`API call failed with status: ${response.status}`);
                 const result = await response.json();
-
-                if (result.candidates && result.candidates.length > 0 &&
-                    result.candidates[0].content && result.candidates[0].content.parts &&
-                    result.candidates[0].content.parts.length > 0) {
-                    return result.candidates[0].content.parts[0].text;
-                } else {
-                    console.error("Unexpected API response structure:", result);
-                    return "Beklager, jeg klarte ikke å behandle det akkurat nå. Prøv igjen.";
-                }
+                return result.candidates?.[0]?.content?.parts?.[0]?.text || "Beklager, jeg klarte ikke å behandle det akkurat nå.";
             } catch (error) {
                 console.error("Error calling Gemini API:", error);
-                return "Det oppstod en feil. Vennligst sjekk konsollen for detaljer.";
+                return "Det oppstod en feil. Sjekk konsollen.";
             }
         }
 
-
-        // --- DOM elementer ---
         const pages = document.querySelectorAll('.page');
         const navButtons = document.querySelectorAll('.nav-btn');
-        const pointsDisplays = [
-            document.getElementById('points-display-main'),
-            document.getElementById('points-display-header'),
-            document.getElementById('rewards-points-total')
-        ];
-        const levelDisplays = [
-            document.getElementById('level-display-header'),
-            document.getElementById('rewards-level')
-        ];
+        const pointsDisplays = document.querySelectorAll('[id^="points-display-"]');
+        const levelDisplays = document.querySelectorAll('[id^="level-display-"]');
         const taskListContainer = document.getElementById('task-list');
         const rewardsStoreContainer = document.getElementById('rewards-store');
         const levelProgressBar = document.getElementById('level-progress-bar');
@@ -341,12 +263,8 @@
         const nextTaskDisplay = document.getElementById('next-task-display');
         const motivationalQuoteDisplay = document.getElementById('motivational-quote');
 
-        // --- Funksjoner ---
         function navigateTo(pageId) {
-            pages.forEach(page => page.classList.remove('active'));
-            const activePage = document.getElementById(`page-${pageId}`);
-            if (activePage) activePage.classList.add('active');
-            
+            pages.forEach(p => p.classList.toggle('active', p.id === `page-${pageId}`));
             navButtons.forEach(btn => {
                 btn.classList.toggle('text-luna-purple-soft', btn.dataset.page === pageId);
                 btn.classList.toggle('text-gray-500', btn.dataset.page !== pageId);
@@ -357,14 +275,23 @@
             pointsDisplays.forEach(el => el.textContent = appState.points);
             levelDisplays.forEach(el => el.textContent = appState.level);
             
-            checkLevelUp();
-            const currentLevelInfo = appState.levels[appState.level];
-            const nextLevelInfo = appState.levels[appState.level + 1];
+            const { level, points, levels } = appState;
+            const currentLevelInfo = levels[level];
+            const nextLevelInfo = levels[level + 1];
 
-            if(nextLevelInfo) {
-                const progress = ((appState.points - currentLevelInfo.threshold) / (nextLevelInfo.threshold - currentLevelInfo.threshold)) * 100;
+            if (nextLevelInfo && points >= nextLevelInfo.threshold) {
+                appState.level++;
+                appState.levelName = levels[appState.level].name;
+                alert(`Gratulerer! Du har nådd Nivå ${appState.level}: ${appState.levelName}!`);
+                updateUI(); // Recalculate progress
+                return;
+            }
+
+            if (nextLevelInfo) {
+                const progress = ((points - currentLevelInfo.threshold) / (nextLevelInfo.threshold - currentLevelInfo.threshold)) * 100;
                 levelProgressBar.style.width = `${Math.max(0, Math.min(100, progress))}%`;
                 nextLevelTargetDisplay.textContent = `${nextLevelInfo.threshold}p`;
+                document.getElementById('rewards-level').textContent = level;
             } else {
                 levelProgressBar.style.width = '100%';
                 nextLevelTargetDisplay.textContent = 'Maks';
@@ -375,15 +302,6 @@
 
             renderTasks();
             renderRewards();
-        }
-
-        function checkLevelUp() {
-            const nextLevel = appState.level + 1;
-            if (appState.levels[nextLevel] && appState.points >= appState.levels[nextLevel].threshold) {
-                appState.level = nextLevel;
-                appState.levelName = appState.levels[nextLevel].name;
-                alert(`Gratulerer! Du har nådd Nivå ${appState.level}: ${appState.levelName}!`);
-            }
         }
 
         function renderTasks() {
@@ -399,16 +317,9 @@
                     </div>
                     <span class="font-bold text-luna-green">+${task.points}p</span>
                 `;
-                
-                const checkbox = taskEl.querySelector(`#task-${key}`);
-                checkbox.addEventListener('change', () => {
-                    if (checkbox.checked && !appState.tasks[key].done) {
-                        appState.tasks[key].done = true;
-                        appState.points += task.points;
-                    } else if (!checkbox.checked && appState.tasks[key].done) {
-                        appState.tasks[key].done = false;
-                        appState.points -= task.points;
-                    }
+                taskEl.querySelector('input').addEventListener('change', (e) => {
+                    appState.tasks[key].done = e.target.checked;
+                    appState.points += e.target.checked ? task.points : -task.points;
                     updateUI();
                 });
                 taskListContainer.appendChild(taskEl);
@@ -427,11 +338,7 @@
                         <p class="text-sm text-gray-600 mb-2">${reward.description}</p>
                     </div>
                     <button data-id="${reward.id}" class="buy-reward-btn w-full mt-3 py-2 px-4 rounded-lg text-white font-semibold transition-colors ${
-                        reward.purchased 
-                        ? 'bg-gray-400 cursor-not-allowed' 
-                        : canAfford 
-                            ? 'bg-luna-green hover:bg-green-600' 
-                            : 'bg-gray-400 cursor-not-allowed'
+                        reward.purchased ? 'bg-gray-400 cursor-not-allowed' : canAfford ? 'bg-luna-green hover:bg-green-600' : 'bg-gray-400 cursor-not-allowed'
                     }" ${reward.purchased || !canAfford ? 'disabled' : ''}>
                         ${reward.purchased ? 'Kjøpt' : `Kjøp for ${reward.cost}p`}
                     </button>
@@ -440,113 +347,71 @@
             });
         }
         
-        function buyReward(rewardId) {
-            const reward = appState.rewards.find(r => r.id === rewardId);
-            if (reward && !reward.purchased && appState.points >= reward.cost) {
-                appState.points -= reward.cost;
-                reward.purchased = true;
-                alert(`Du har låst opp "${reward.name}"!`);
-                updateUI();
-            }
-        }
-        
-        function updateQuote() {
-            const randomIndex = Math.floor(Math.random() * appState.motivationalQuotes.length);
-            motivationalQuoteDisplay.textContent = `"${appState.motivationalQuotes[randomIndex]}"`;
-        }
-
-        // --- Event Listeners ---
-        navButtons.forEach(btn => {
-            btn.addEventListener('click', () => navigateTo(btn.dataset.page));
-        });
-        
         rewardsStoreContainer.addEventListener('click', (e) => {
             if (e.target.classList.contains('buy-reward-btn')) {
-                buyReward(parseInt(e.target.dataset.id));
+                const reward = appState.rewards.find(r => r.id === parseInt(e.target.dataset.id));
+                if (reward && !reward.purchased && appState.points >= reward.cost) {
+                    appState.points -= reward.cost;
+                    reward.purchased = true;
+                    alert(`Du har låst opp "${reward.name}"!`);
+                    updateUI();
+                }
             }
         });
-
-        // --- Chat Funksjonalitet ---
+        
+        // --- Chat ---
         const chatSendBtn = document.getElementById('chat-send');
         const chatInput = document.getElementById('chat-input');
         const chatMessagesContainer = document.querySelector('.chat-messages');
 
         function addChatMessage(message, sender, isLoading = false) {
             const messageWrapper = document.createElement('div');
-            let content;
-
-            if (isLoading) {
-                content = `<div class="loader"></div>`;
-            } else {
-                content = `<p>${message.replace(/\n/g, '<br>')}</p>`;
-            }
-
-            if (sender === 'user') {
-                messageWrapper.className = "flex items-start justify-end";
-                messageWrapper.innerHTML = `
-                    <div class="bg-luna-pink-deep text-white p-3 rounded-lg rounded-br-none max-w-xs">
-                        ${content}
-                    </div>
-                    <div class="w-10 h-10 rounded-full bg-pink-200 flex items-center justify-center text-pink-700 font-bold ml-3 flex-shrink-0">I</div>
-                `;
-            } else { // 'luna'
-                messageWrapper.id = isLoading ? 'loading-bubble' : '';
-                messageWrapper.className = "flex items-start";
-                messageWrapper.innerHTML = `
-                    <div class="w-10 h-10 rounded-full bg-luna-purple-soft flex items-center justify-center text-white font-bold mr-3 flex-shrink-0">L</div>
-                    <div class="bg-purple-100 text-gray-800 p-3 rounded-lg rounded-bl-none max-w-xs">
-                        ${content}
-                    </div>
-                `;
-            }
+            messageWrapper.className = `flex items-start ${sender === 'user' ? 'justify-end' : ''}`;
+            messageWrapper.innerHTML = `
+                ${sender === 'luna' ? `<div class="w-10 h-10 rounded-full bg-luna-purple-soft flex items-center justify-center text-white font-bold mr-3 flex-shrink-0">L</div>` : ''}
+                <div class="${sender === 'user' ? 'bg-luna-pink-deep text-white rounded-br-none' : 'bg-purple-100 text-gray-800 rounded-bl-none'} p-3 rounded-lg max-w-xs">
+                    ${isLoading ? `<div class="loader"></div>` : `<p>${message.replace(/\n/g, '<br>')}</p>`}
+                </div>
+                ${sender === 'user' ? `<div class="w-10 h-10 rounded-full bg-pink-200 flex items-center justify-center text-pink-700 font-bold ml-3 flex-shrink-0">I</div>` : ''}
+            `;
+            if (isLoading) messageWrapper.id = 'loading-bubble';
             chatMessagesContainer.appendChild(messageWrapper);
             chatMessagesContainer.scrollTop = chatMessagesContainer.scrollHeight;
         }
         
         async function handleChatSend() {
             const userInput = chatInput.value.trim();
-            if (userInput) {
-                chatInput.value = '';
-                addChatMessage(userInput, 'user');
-                appState.chatHistory.push({ role: "user", parts: [{ text: userInput }] });
+            if (!userInput) return;
+            
+            chatInput.value = '';
+            addChatMessage(userInput, 'user');
+            appState.chatHistory.push({ role: "user", parts: [{ text: userInput }] });
 
-                addChatMessage('', 'luna', true);
-                chatSendBtn.disabled = true;
-
-                const personaPrompt = `You are Luna, a supportive, elegant, and firm sissy guide. Your name is Luna. The user's name is Isadora. Continue this conversation in a motivating and feminine tone, speaking in Norwegian.`;
-                const fullPrompt = `${personaPrompt}\n\n${userInput}`;
-                
-                const lunaResponse = await callGemini(fullPrompt, appState.chatHistory.slice(0, -1));
-                
-                document.getElementById('loading-bubble')?.remove();
-
-                addChatMessage(lunaResponse, 'luna');
-                appState.chatHistory.push({ role: "model", parts: [{ text: lunaResponse }] });
-                chatSendBtn.disabled = false;
-            }
+            addChatMessage('', 'luna', true);
+            
+            const personaPrompt = `You are Luna, a supportive, elegant, and firm sissy guide. Your name is Luna. The user's name is Isadora. Continue this conversation in a motivating and feminine tone, speaking in Norwegian.`;
+            const lunaResponse = await callGemini(`${personaPrompt}\n\n${userInput}`, appState.chatHistory.slice(0, -1));
+            
+            document.getElementById('loading-bubble')?.remove();
+            addChatMessage(lunaResponse, 'luna');
+            appState.chatHistory.push({ role: "model", parts: [{ text: lunaResponse }] });
         }
 
         chatSendBtn.addEventListener('click', handleChatSend);
-        chatInput.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') handleChatSend();
-        });
+        chatInput.addEventListener('keypress', (e) => e.key === 'Enter' && handleChatSend());
         
-        // --- Dokumentasjon Funksjonalitet ---
+        // --- Dokumentasjon ---
         const saveDiaryBtn = document.getElementById('save-diary-button');
         const diaryInput = document.getElementById('diary-entry');
         const historyGallery = document.getElementById('history-gallery');
         const getReflectionBtn = document.getElementById('get-reflection-button');
         const reflectionContainer = document.getElementById('reflection-container');
 
-        diaryInput.addEventListener('input', () => {
-            getReflectionBtn.disabled = diaryInput.value.trim().length === 0;
-        });
-
+        diaryInput.addEventListener('input', () => getReflectionBtn.disabled = diaryInput.value.trim().length === 0);
         saveDiaryBtn.addEventListener('click', () => {
             const entryText = diaryInput.value.trim();
             if (entryText) {
-                const newEntry = { type: 'diary', date: new Date(), content: entryText };
-                appState.diaryEntries.unshift(newEntry);
+                appState.diaryEntries.unshift({ type: 'diary', date: new Date(), content: entryText });
                 diaryInput.value = '';
                 getReflectionBtn.disabled = true;
                 alert('Dagboknotat lagret!');
@@ -560,34 +425,24 @@
 
             reflectionContainer.classList.remove('hidden');
             reflectionContainer.innerHTML = '<div class="flex justify-center items-center"><div class="loader"></div><p class="ml-3">Luna reflekterer...</p></div>';
-            getReflectionBtn.disabled = true;
-
-            const prompt = `You are Luna, a supportive, elegant, and firm sissy guide. Your name is Luna. The user, Isadora, has just written this diary entry. Read it and provide a short, encouraging, and insightful reflection on her feelings and progress. Respond directly to Isadora in Norwegian. Diary Entry: "${entryText}"`;
             
+            const prompt = `You are Luna, a supportive sissy guide. The user, Isadora, has written this diary entry. Provide a short, encouraging, and insightful reflection on her feelings. Respond directly to Isadora in Norwegian. Diary Entry: "${entryText}"`;
             const reflectionText = await callGemini(prompt, null);
 
             reflectionContainer.innerHTML = `<p>${reflectionText.replace(/\n/g, '<br>')}</p>`;
-            getReflectionBtn.disabled = false;
         });
         
         function renderHistory() {
-            historyGallery.innerHTML = '';
-            if (appState.diaryEntries.length === 0) {
-                 historyGallery.innerHTML = '<p class="text-gray-400">Dine lagrede notater vil vises her.</p>';
-                 return;
-            }
-            appState.diaryEntries.forEach(entry => {
-                const entryEl = document.createElement('div');
-                entryEl.className = 'bg-white p-3 rounded-lg shadow-sm mb-2';
-                entryEl.innerHTML = `
-                    <p class="text-sm text-gray-500">${entry.date.toLocaleDateString('no-NO')} - ${entry.date.toLocaleTimeString('no-NO')}</p>
-                    <p class="mt-1">${entry.content.replace(/\n/g, '<br>')}</p>
-                `;
-                historyGallery.appendChild(entryEl);
-            });
+            historyGallery.innerHTML = appState.diaryEntries.length === 0 
+                ? '<p class="text-gray-400">Dine lagrede notater vil vises her.</p>'
+                : appState.diaryEntries.map(entry => `
+                    <div class="bg-white p-3 rounded-lg shadow-sm mb-2">
+                        <p class="text-sm text-gray-500">${entry.date.toLocaleString('no-NO')}</p>
+                        <p class="mt-1">${entry.content.replace(/\n/g, '<br>')}</p>
+                    </div>`).join('');
         }
 
-        // --- Inspirasjon Funksjonalitet ---
+        // --- Inspirasjon ---
         const imageUploadInput = document.getElementById('image-upload');
         const imagePreview = document.getElementById('image-preview');
         const uploadLabel = document.getElementById('upload-label');
@@ -601,7 +456,7 @@
                 reader.onload = (e) => {
                     imagePreview.src = e.target.result;
                     imagePreview.classList.remove('hidden');
-                    appState.inspirationImage = e.target.result.split(',')[1]; // Lagre kun base64-data
+                    appState.inspirationImage = e.target.result.split(',')[1];
                     uploadLabel.textContent = file.name;
                     generateInspirationBtn.disabled = false;
                 };
@@ -610,36 +465,53 @@
         });
 
         generateInspirationBtn.addEventListener('click', async () => {
-            if (!appState.inspirationImage) {
-                alert("Vennligst last opp et bilde først.");
-                return;
-            }
+            if (!appState.inspirationImage) return;
 
             inspirationChallengeContainer.innerHTML = '<div class="flex justify-center items-center p-4"><div class="loader"></div><p class="ml-3">Luna ser på bildet ditt og tenker...</p></div>';
-            generateInspirationBtn.disabled = true;
-
-            const prompt = `Du er Luna, en kreativ og elegant sissy-veileder. Brukeren din, Isadora, har lastet opp et bilde for inspirasjon. Se nøye på bildet – fargene, stemningen, klærne, omgivelsene. Basert på det du ser, lag en unik, feminin og oppnåelig utfordring for henne. Utfordringen skal hjelpe henne med å utforske sin Isadora-identitet. Svar direkte til henne på norsk.`;
-
+            
+            const prompt = `Du er Luna, en kreativ og elegant sissy-veileder. Brukeren din, Isadora, har lastet opp et bilde for inspirasjon. Se nøye på bildet. Lag en unik, feminin og oppnåelig utfordring for henne basert på det du ser. Svar direkte til henne på norsk.`;
             const challengeText = await callGeminiVision(prompt, appState.inspirationImage);
 
-            inspirationChallengeContainer.innerHTML = `
-                <div class="p-4 rounded-lg bg-pink-50 border-l-4 border-luna-pink-deep">
-                    <p>${challengeText.replace(/\n/g, '<br>')}</p>
-                </div>
-            `;
-            generateInspirationBtn.disabled = false;
+            inspirationChallengeContainer.innerHTML = `<div class="p-4 rounded-lg bg-pink-50 border-l-4 border-luna-pink-deep"><p>${challengeText.replace(/\n/g, '<br>')}</p></div>`;
         });
 
+        // --- Offline/Online Håndtering ---
+        const offlineIndicator = document.getElementById('offline-indicator');
+        const aiButtons = document.querySelectorAll('.ai-button');
+        const aiIndicators = document.querySelectorAll('.ai-feature-indicator');
+
+        function handleConnectionChange() {
+            const isOnline = navigator.onLine;
+            if (isOnline) {
+                offlineIndicator.classList.add('opacity-0', '-translate-y-full');
+                aiButtons.forEach(btn => btn.disabled = false);
+                aiIndicators.forEach(ind => ind.classList.remove('hidden'));
+                if (diaryInput.value.trim()) getReflectionBtn.disabled = false;
+                if (!appState.inspirationImage) generateInspirationBtn.disabled = true;
+            } else {
+                offlineIndicator.classList.remove('opacity-0', '-translate-y-full');
+                aiButtons.forEach(btn => btn.disabled = true);
+                aiIndicators.forEach(ind => ind.classList.add('hidden'));
+                addChatMessage("Du er nå offline. Jeg kan ikke chatte før du er tilkoblet igjen.", 'luna');
+            }
+        }
+        
+        window.addEventListener('online', handleConnectionChange);
+        window.addEventListener('offline', handleConnectionChange);
 
         // --- Initialisering ---
         function initialize() {
-            navigateTo('hjem');
+            navButtons.forEach(btn => btn.addEventListener('click', () => navigateTo(btn.dataset.page)));
+            appState.chatHistory.push({ role: "model", parts: [{ text: "Hei Isadora. Jeg er her for deg, drevet av en dypere forståelse. Hva tenker du på?" }] });
+            chatMessagesContainer.innerHTML = '';
+            appState.chatHistory.forEach(msg => addChatMessage(msg.parts[0].text, msg.role === 'model' ? 'luna' : 'user'));
+            
             updateUI();
-            updateQuote();
-            setInterval(updateQuote, 30000);
+            handleConnectionChange();
         }
 
         initialize();
     </script>
 </body>
 </html>
+
